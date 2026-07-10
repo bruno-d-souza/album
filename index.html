@@ -145,12 +145,42 @@
             overflow: hidden;
             background: #f0f0f0;
             border: 1px solid #f0f0f0;
+            position: relative; /* Adicionado para permitir o alinhamento absoluto da marca d'água */
         }
         .media-crop img, .media-crop video {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
+        }
+
+        /* ▶️ MARCA D'ÁGUA DE PLAY PARA OS VÍDEOS */
+        .play-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.85); /* Fundo branco semi-transparente */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            pointer-events: none; /* Garante que o clique passe direto para o card */
+            transition: background 0.2s;
+        }
+        /* Desenho do triângulo do Play usando SVG inline para não depender de pacotes de ícones externos */
+        .play-watermark svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--pastel-green-dark);
+            margin-left: 2px; /* Ajuste óptico fino para centralizar o triângulo */
+        }
+        .photo-item:hover .play-watermark {
+            background: rgba(255, 255, 255, 1); /* Fica ligeiramente mais aceso no hover do card */
         }
 
         /* Legenda discreta, simulando escrita à mão simulada das referências */
@@ -347,6 +377,12 @@
                     video.muted = true;
                     video.preload = "metadata";
                     crop.appendChild(video);
+
+                    // Cria a marca d'água de "Play" centralizada usando SVG puro
+                    const watermark = document.createElement("div");
+                    watermark.className = "play-watermark";
+                    watermark.innerHTML = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+                    crop.appendChild(watermark);
                 } else {
                     const img = document.createElement("img");
                     img.src = arq.url;
