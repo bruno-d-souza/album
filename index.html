@@ -42,17 +42,17 @@
     <!-- TELA DO ÁLBUM (PÓS LOGIN) -->
     <div id="album-content" class="hidden">
         
-        <!-- Seleção de Pastas (Baseado no prefixo dos arquivos do R2) -->
+        <!-- Seleção de Pastas (Baseado no prefixo do seu R2) -->
         <div class="folder-select-container">
-            <label for="pasta-select">Escolha a Pasta / Álbum:</label>
+            <label for="pasta-select">Escolha o Álbum:</label>
             <select id="pasta-select" onchange="carregarArquivos()">
-                <option value="">Raiz (Todas as fotos)</option>
-                <!-- Adicione aqui os nomes das pastas que você criou no seu R2 -->
-                <option value="viagem-2026">Viagem 2026</option>
-                <option value="familia">Família</option>
+                <option value="">Todos os arquivos</option>
+                <!-- Altere os valores abaixo para bater com as pastas que criar no R2 -->
+                <option value="viagem">Viagem</option>
+                <option value="festas">Festas</option>
             </select>
         </div>
-
+        
         <!-- Botão Especial para Baixar com Senha Extra -->
         <button class="btn-download-master" onclick="solicitarDownloadOriginal()">Baixar Arquivo Original</button>
 
