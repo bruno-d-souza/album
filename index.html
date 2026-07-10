@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Álbum Pessoal Seguro</title>
+    <style>
+        :root { --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --accent: #00adb5; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; user-select: none; -webkit-user-select: none; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        h1 { text-align: center; color: #fff; }
+        .box { background: var(--card); padding: 20px; border-radius: 8px; text-align: center; max-width: 400px; margin: 40px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 6px; border: none; box-sizing: border-box; }
+        input, select { background: #2d2d2d; color: #fff; }
+        button { background: var(--accent); color: white; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        button:hover { opacity: 0.9; }
+        .hidden { display: none; }
+        .folder-select-container { max-width: 400px; margin: 0 auto 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-top: 20px; }
+        .media-card { background: var(--card); border-radius: 8px; overflow: hidden; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .media-wrapper { position: relative; width: 100%; padding-top: 100%; /* Quadradinho 1:1 */ }
+        .media-wrapper img, .media-wrapper video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        /* Camada Invisível Anti-clique e Anti-arrasto */
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; background: rgba(0,0,0,0); pointer-events: auto; }
+        .media-card p { padding: 10px; margin: 0; font-size: 14px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .btn-download-master { background: #ff5722; max-width: 200px; margin: 20px auto; display: block; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎬 Meu Álbum Privado</h1>
+
+    <!-- TELA DE LOGIN -->
+    <div id="login-box" class="box">
+        <h3>Acesso Restrito</h3>
+        <input type="password" id="senha" placeholder="Digite a senha do álbum">
+        <button onclick="autenticar()">Entrar</button>
+        <p id="erro" style="color: #ff5555; font-size: 14px;"></p>
+    </div>
+
+    <!-- TELA DO ÁLBUM (PÓS LOGIN) -->
+    <div id="album-content" class="hidden">
+        
+        <!-- Seleção de Pastas (Baseado no prefixo dos arquivos do R2) -->
+        <div class="folder-select-container">
+            <label for="pasta-select">Escolha a Pasta / Álbum:</label>
+            <select id="pasta-select" onchange="carregarArquivos()">
+                <option value="">Raiz (Todas as fotos)</option>
+                <!-- Adicione aqui os nomes das pastas que você criou no seu R2 -->
+                <option value="viagem-2026">Viagem 2026</option>
+                <option value="familia">Família</option>
+            </select>
+        </div>
+
+        <!-- Botão Especial para Baixar com Senha Extra -->
+        <button class="btn-download-master" onclick="solicitarDownloadOriginal()">Baixar Arquivo Original</button>
+
+        <!-- Grade de Fotos/Vídeos -->
+        <div id="midia-grid" class="grid"></div>
+    </div>
+</div>
+
+<script>
+    // ⚠️ COLOQUE A URL DO SEU WORKER CLOUDFLARE AQUI ABAIXO:
+    const WORKER_URL = "https://api-album.bruno-d-souza.workers.dev/";
+    
+    let senhaSalva = "";
+
+    // Bloqueia clique direito do mouse na página inteira
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    
+    // Bloqueia atalhos comuns de inspeção (F12, Ctrl+Shift+I, Ctrl+U)
+    document.addEventListener('keydown', event => {
+        if (event.keyCode == 123 || (event.ctrlKey && event.shiftKey && event.keyCode == 73) || (event.ctrlKey && event.keyCode == 85)) {
+            event.preventDefault();
+            return false;
+        }
+    });
+
+    async function autenticar() {
+        const senhaInput = document.getElementById("senha").value;
+        const erroTxt = document.getElementById("erro");
+        
+        try {
+            const response = await fetch(WORKER_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ senha: senhaInput, pasta: "" })
+            });
+
+            if (!response.ok) {
+                throw new Error("Senha inválida ou erro na conexão.");
+            }
+
+            senhaSalva = senhaInput;
+            document.getElementById("login-box").classList.add("hidden");
+            document.getElementById("album-content").classList.remove("hidden");
+            
+            carregarArquivos();
+        } catch (err) {
+            erroTxt.innerText = "Senha incorreta. Tente novamente.";
+        }
+    }
+
+    async function carregarArquivos() {
+        const pastaSelecionada = document.getElementById("pasta-select").value;
+        const grid = document.getElementById("midia-grid");
+        grid.innerHTML = "<p style='text-align:center; width:100%;'>Carregando mídias seguras...</p>";
+
+        try {
+            const response = await fetch(WORKER_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ senha: senhaSalva, pasta: pastaSelecionada })
+            });
+
+            const dados = await response.json();
+            grid.innerHTML = "";
+
+            if (!dados.arquivos || dados.arquivos.length === 0) {
+                grid.innerHTML = "<p style='text-align:center; width:100%;'>Nenhum arquivo encontrado nesta pasta.</p>";
+                return;
+            }
+
+            dados.arquivos.forEach(arq => {
+                const card = document.createElement("div");
+                card.className = "media-card";
+
+                const wrapper = document.createElement("div");
+                wrapper.className = "media-wrapper";
+
+                // Camada invisível protetora por cima da imagem/vídeo
+                const overlay = document.createElement("div");
+                overlay.className = "overlay";
+                wrapper.appendChild(overlay);
+
+                const extensao = arq.nome.split('.').pop().toLowerCase();
+                const ehVideo = ['mp4', 'webm', 'mov'].includes(extensao);
+
+                if (ehVideo) {
+                    const video = document.createElement("video");
+                    video.src = arq.url;
+                    video.controls = true;
+                    video.controlsList = "nodownload"; // Remove botão de download nativo do Chrome
+                    video.disablePictureInPicture = true;
+                    wrapper.appendChild(video);
+                } else {
+                    const img = document.createElement("img");
+                    img.src = arq.url;
+                    img.draggable = false; // Impede arrastar a foto para fora
+                    wrapper.appendChild(img);
+                }
+
+                const nomeTxt = document.createElement("p");
+                nomeTxt.innerText = arq.nome;
+
+                card.appendChild(wrapper);
+                card.appendChild(nomeTxt);
+                grid.appendChild(card);
+            });
+
+        } catch (err) {
+            grid.innerHTML = "<p style='color:red;'>Erro ao carregar dados do R2.</p>";
+        }
+    }
+
+    function solicitarDownloadOriginal() {
+        const confirmaSenha = prompt("Digite a senha de liberação para download:");
+        if (confirmaSenha === senhaSalva) {
+            const arquivoNome = prompt("Digite o nome exato do arquivo que quer baixar (ex: foto1.jpg ou viagem-2026/foto1.jpg):");
+            if (arquivoNome) {
+                // Abre o link direto via worker que força o download
+                window.open(`${WORKER_URL}?file=${encodeURIComponent(arquivoNome)}&token=${senhaSalva}`, '_blank');
+            }
+        } else {
+            alert("Senha incorreta! Download negado.");
+        }
+    }
+</script>
+</body>
+</html>
