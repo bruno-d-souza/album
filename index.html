@@ -4,22 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Album</title>
-    <!-- Fonte estilo manuscrita para as legendas (Scrapbook) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Georgia&display=swap" rel="stylesheet">
-    
     <style>
         :root {
-            --bg-body: #d1ded6; 
+            --bg-body: #ebebeb; /* Cinza claro neutro para destacar o álbum */
             --bg-card: #ffffff;
-            --text-main: #14241b;
-            --pastel-green: #a7c7b2; 
-            --pastel-green-dark: #193a24; 
-            --border-color: #8fa396;
+            --text-main: #2d3732;
+            --pastel-green: #d1ebd9;
+            --pastel-green-dark: #2b5138;
+            --border-color: #d1d5d1;
         }
         body {
-            font-family: 'Georgia', 'Times New Roman', serif;
+            font-family: 'Georgia', 'Times New Roman', serif; /* Tom mais artístico de álbum */
             background-color: var(--bg-body);
             color: var(--text-main);
             margin: 0;
@@ -27,7 +22,7 @@
         }
         .topbar {
             background: var(--bg-card);
-            border-bottom: 2px solid var(--pastel-green-dark);
+            border-bottom: 1px solid var(--border-color);
             padding: 12px 24px;
             display: flex;
             align-items: center;
@@ -39,30 +34,30 @@
         }
         .topbar h1 {
             margin: 0;
-            font-size: 24px;
-            font-weight: 700;
+            font-size: 22px;
+            font-weight: 500;
             color: var(--pastel-green-dark);
         }
         .main-container {
-            max-width: 1400px;
+            max-width: 1300px;
             margin: 0 auto;
             padding: 24px;
         }
         .login-box {
             background: var(--bg-card);
-            border: 2px solid var(--pastel-green-dark);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 32px;
             max-width: 340px;
             margin: 120px auto;
-            box-shadow: 4px 6px 0px rgba(25, 58, 36, 0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             text-align: center;
         }
         input[type="password"] {
             width: 100%;
             padding: 12px;
             margin: 16px 0;
-            border: 2px solid var(--border-color);
+            border: 1px solid var(--border-color);
             border-radius: 6px;
             box-sizing: border-box;
             font-size: 16px;
@@ -70,22 +65,16 @@
         button {
             background-color: var(--pastel-green);
             color: var(--pastel-green-dark);
-            border: 2px solid var(--pastel-green-dark);
+            border: none;
             padding: 10px 20px;
             border-radius: 6px;
-            font-weight: 700;
+            font-weight: 600;
             cursor: pointer;
-            box-shadow: 2px 2px 0px var(--pastel-green-dark);
-            transition: transform 0.1s, box-shadow 0.1s;
-        }
-        button:active {
-            transform: translate(2px, 2px);
-            box-shadow: 0px 0px 0px var(--pastel-green-dark);
         }
         .btn-logout {
             background-color: transparent;
-            color: var(--pastel-green-dark);
-            border: 2px solid var(--pastel-green-dark);
+            color: #707773;
+            border: 1px solid var(--border-color);
             padding: 6px 14px;
             font-size: 13px;
         }
@@ -93,95 +82,80 @@
         
         .folder-menu {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
             position: relative;
             z-index: 150;
         }
         .folder-btn {
             background: var(--bg-card);
-            color: var(--pastel-green-dark);
-            border: 2px solid var(--pastel-green-dark);
-            padding: 8px 20px;
+            color: #5c635f;
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 14px;
-            font-weight: 700;
-            box-shadow: 2px 3px 0px var(--pastel-green-dark);
         }
         .folder-btn.active {
-            background: var(--pastel-green-dark);
-            color: #ffffff;
-            box-shadow: none;
-            transform: translate(2px, 3px);
+            background: var(--pastel-green);
+            color: var(--pastel-green-dark);
+            border-color: transparent;
         }
 
-        /* 🎞️ CONTAINER MURAL ESTILO SCRAPBOOK DINÂMICO */
+        /* 🎞️ CONTAINER MURAL ESTILO SCRAPBOOK (FOTOS JOGADAS NA MESA) */
         .photo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            grid-auto-rows: 20px; 
-            gap: 25px 15px;
-            padding: 40px 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px 10px; /* Margens sobrepostas aproximadas */
+            padding: 20px 0;
             width: 100%;
         }
 
-        /* 📸 MINIATURAS POLAROID DINÂMICAS */
+        /* 📸 MINIATURAS ESTILO FOTO REVELADA POLAROID/RETRÔ */
         .photo-item {
             background: #ffffff;
-            padding: 15px 15px 20px 15px; 
-            border-radius: 1px;
-            box-shadow: 5px 8px 16px rgba(20, 36, 27, 0.2);
-            border: 1px solid #dcdcdc;
+            /* Bordas brancas grossas para simular o papel fotográfico impresso das referências */
+            padding: 12px 12px 24px 12px; 
+            border-radius: 2px;
+            width: 180px; /* Tamanho clássico de miniatura */
+            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.12); /* Sombra realista de papel sobreposto */
+            border: 1px solid #e3e3e3;
             cursor: pointer;
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, z-index 0s;
             position: relative;
-            display: flex;
-            flex-direction: column;
             
-            transform: rotate(var(--rotation)) scale(var(--base-scale, 1));
-            grid-row-end: span var(--grid-span, 12);
-            margin: var(--overlap-margin);
+            /* Efeito dinâmico de rotação gerado via JS no loop (Bagunça Organizada) */
+            transform: rotate(var(--rotation));
+            margin-right: -10px; /* Faz as fotos se encostarem e sobreporem levemente lateralmente */
         }
 
-        /* Efeito Fita Adesiva */
-        .photo-item::before {
-            content: "";
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%) rotate(var(--tape-rotation, -3deg));
-            width: 70px;
-            height: 20px;
-            background-color: rgba(167, 199, 178, 0.6); 
-            backdrop-filter: blur(1px);
-            box-shadow: 1px 1px 2px rgba(0,0,0,0.05);
-            z-index: 10;
-        }
-
+        /* Quando passa o mouse por cima, a foto vai para o topo da "pilha" e endireita um pouco */
         .photo-item:hover {
-            z-index: 999 !important;
-            transform: scale(1.12) rotate(0deg) !important;
-            box-shadow: 10px 18px 30px rgba(20, 36, 27, 0.35);
+            z-index: 99 !important;
+            transform: scale(1.1) rotate(0deg);
+            box-shadow: 5px 12px 20px rgba(0, 0, 0, 0.2);
         }
 
+        /* Container interno para cortar a imagem/video em tamanho quadrado miniatura uniforme */
         .media-crop {
             width: 100%;
-            flex-grow: 1;
+            height: 140px; /* Altura fixa para as miniaturas */
             overflow: hidden;
-            background: #f7f7f7;
-            border: 1px solid #eeeeee;
-            position: relative;
+            background: #f0f0f0;
+            border: 1px solid #f0f0f0;
+            position: relative; /* Adicionado para permitir o alinhamento absoluto da marca d'água */
         }
         .media-crop img, .media-crop video {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
+            image-rendering: -webkit-optimize-contrast; /* Deixa a miniatura levemente compactada visualmente mais nítida */
         }
 
-        /* ▶️ MARCA D'ÁGUA DE PLAY */
+        /* ▶️ MARCA D'ÁGUA DE PLAY PARA OS VÍDEOS (Atualizada para 50% de opacidade) */
         .play-watermark {
             position: absolute;
             top: 50%;
@@ -189,49 +163,57 @@
             transform: translate(-50%, -50%);
             width: 44px;
             height: 44px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.9); /* Fundo branco circular límpido */
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-            z-index: 12;
-            pointer-events: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            pointer-events: none; /* Garante que o clique passe direto para o card */
+            opacity: 0.5; /* 50% de opacidade por padrão conforme solicitado */
+            transition: opacity 0.2s ease, transform 0.2s ease;
         }
+        /* Desenho do triângulo do Play usando SVG inline */
         .play-watermark svg {
             width: 18px;
             height: 18px;
             fill: var(--pastel-green-dark);
-            margin-left: 2px;
+            margin-left: 3px; /* Ajuste óptico fino para centralizar o triângulo */
+        }
+        /* Efeito de destaque ao passar o mouse sobre o card do vídeo */
+        .photo-item:hover .play-watermark {
+            opacity: 1; /* Fica 100% visível no hover */
+            transform: translate(-50%, -50%) scale(1.05); /* Dá um leve feedback de crescimento */
         }
 
+        /* Legenda discreta, simulando escrita à mão simulada das referências */
         .photo-info {
-            padding-top: 14px;
-            font-family: 'Caveat', cursive;
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--pastel-green-dark);
+            padding-top: 12px;
+            font-size: 12px;
+            color: #555;
             text-align: center;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-style: italic;
         }
 
-        /* Indicador de carregamento no final da rolagem */
+        /* Indicador de carregamento no final do scroll */
         .loading-trigger {
+            width: 100%;
             text-align: center;
             padding: 20px;
-            font-weight: bold;
-            color: var(--pastel-green-dark);
-            width: 100%;
-            grid-column: 1 / -1;
+            font-size: 14px;
+            color: #707773;
+            font-style: italic;
         }
 
-        /* 🗺️ LIGHTBOX HIGH CONTRAST */
+        /* 🗺️ LIGHTBOX FIT TO SCREEN (EXPANDIR NO CLIQUE) */
         .lightbox {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(20, 36, 27, 0.92); 
+            background: rgba(235, 235, 235, 0.98); /* Fundo cinza clarinho combinando com a paleta */
             z-index: 2000;
             display: flex;
             align-items: center;
@@ -242,8 +224,8 @@
             max-width: 90vw;
             max-height: 85vh;
             object-fit: contain;
-            border: 16px solid #ffffff;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 15px solid #ffffff; /* Mantém a moldura de foto mesmo quando expandida */
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
             border-radius: 2px;
             background: #fff;
         }
@@ -257,7 +239,7 @@
 <body>
 
 <div class="topbar">
-    <h1>Álbum Fotográfico</h1>
+    <h1>Album</h1>
     <button id="logout-btn" class="btn-logout hidden" onclick="deslogar()">Sair</button>
 </div>
 
@@ -265,17 +247,17 @@
 
     <!-- LOGIN -->
     <div id="login-box" class="login-box">
-        <h3 style="margin-top:0; color: var(--pastel-green-dark);">Acessar Álbum</h3>
+        <h3>Acessar Álbum</h3>
         <input type="password" id="senha" placeholder="Digite a senha">
         <button onclick="autenticar()">Visualizar</button>
-        <p id="erro" style="color: #c5221f; font-size: 14px; margin-top: 10px; font-weight: bold;"></p>
+        <p id="erro" style="color: #c5221f; font-size: 14px; margin-top: 10px;"></p>
     </div>
 
     <!-- CONTEÚDO -->
     <div id="album-content" class="hidden">
         <div id="folder-menu" class="folder-menu"></div>
         <div id="photo-grid" class="photo-grid"></div>
-        <div id="loading-trigger" class="loading-trigger hidden">Carregando mais lembranças...</div>
+        <div id="loading-trigger" class="loading-trigger hidden">Carregando mais fotos...</div>
     </div>
 
 </div>
@@ -292,10 +274,10 @@
     let senhaSalva = "";
     let pastaAtiva = "";
     
-    // Variáveis para paginação infinita
-    let todosArquivos = []; 
-    let itensExibidos = 0;
-    const ITENS_POR_PAGINA = 12; // Carrega de 12 em 12 fotos por vez para manter leve
+    // Variáveis de controle do Scroll Infinito
+    let listaArquivosCompleta = [];
+    let indiceAtual = 0;
+    const ITENS_POR_PAGINA = 12; // Quantidade de fotos por "lote" de carregamento
 
     function renovarSessao() {
         if (senhaSalva) {
@@ -320,9 +302,6 @@
             }
         }
         localStorage.clear();
-        
-        // Ativa o monitoramento de rolagem da página para carregar mais fotos automaticamente
-        configurarScrollInfinito();
     };
 
     async function autenticar() {
@@ -353,6 +332,7 @@
         document.getElementById("album-content").classList.remove("hidden");
         document.getElementById("logout-btn").classList.remove("hidden");
         carregarDados(true); 
+        configurarScrollInfinito();
     }
 
     function deslogar() {
@@ -362,8 +342,12 @@
 
     async function carregarDados(primeiraCarga = false) {
         const grid = document.getElementById("photo-grid");
-        document.getElementById("loading-trigger").classList.add("hidden");
-        grid.innerHTML = "<p>Buscando mídias...</p>";
+        const trigger = document.getElementById("loading-trigger");
+        
+        if (primeiraCarga) {
+            grid.innerHTML = "<p>Buscando mídias...</p>";
+            trigger.classList.add("hidden");
+        }
 
         renovarSessao();
 
@@ -384,17 +368,19 @@
                 return;
             }
 
-            grid.innerHTML = "";
+            if (primeiraCarga || grid.innerHTML.includes("Buscando mídias...")) {
+                grid.innerHTML = "";
+            }
+
             if (!dados.arquivos || dados.arquivos.length === 0) {
                 grid.innerHTML = "<p>Nenhum arquivo encontrado nesta pasta.</p>";
+                trigger.classList.add("hidden");
                 return;
             }
 
-            // Armazena a lista total vinda do servidor e reseta os contadores de paginação local
-            todosArquivos = dados.arquivos;
-            itensExibidos = 0;
+            listaArquivosCompleta = dados.arquivos;
+            indiceAtual = 0;
             
-            // Exibe o primeiro bloco de imagens
             carregarProximoLote();
 
         } catch (err) {
@@ -404,49 +390,26 @@
 
     function carregarProximoLote() {
         const grid = document.getElementById("photo-grid");
-        const limite = Math.min(itensExibidos + ITENS_POR_PAGINA, todosArquivos.length);
+        const trigger = document.getElementById("loading-trigger");
         
-        if (itensExibidos >= todosArquivos.length) {
-            document.getElementById("loading-trigger").classList.add("hidden");
-            return; 
+        if (indiceAtual >= listaArquivosCompleta.length) {
+            trigger.classList.add("hidden");
+            return;
         }
 
-        for (let i = itensExibidos; i < limite; i++) {
-            const arq = todosArquivos[i];
-            const index = i;
-
+        trigger.classList.remove("hidden");
+        
+        const fimDoLote = Math.min(indiceAtual + ITENS_POR_PAGINA, listaArquivosCompleta.length);
+        
+        for (let i = indiceAtual; i < fimDoLote; i++) {
+            const arq = listaArquivosCompleta[i];
+            
             const item = document.createElement("div");
             item.className = "photo-item";
             
-            // Algoritmo de scrapbook dinâmico
-            const randStyle = index % 3;
-            let spanSize = 12; 
-            let scaleSize = 1;
-            let overlap = "0px";
-
-            if (randStyle === 0) {
-                spanSize = 15; 
-                scaleSize = 1.02;
-                overlap = "0px -8px 5px -5px"; 
-            } else if (randStyle === 1) {
-                spanSize = 11; 
-                scaleSize = 0.95;
-                overlap = "5px -4px -5px 8px";
-            } else {
-                spanSize = 13; 
-                scaleSize = 1.0;
-                overlap = "-4px 10px 4px -2px";
-            }
-
-            const grausAleatorios = (Math.random() * 14 - 7).toFixed(2); 
-            const tapeRot = (Math.random() * 10 - 5).toFixed(2);
-
+            const grausAleatorios = (Math.random() * 12 - 6).toFixed(2);
             item.style.setProperty('--rotation', `${grausAleatorios}deg`);
-            item.style.setProperty('--tape-rotation', `${tapeRot}deg`);
-            item.style.setProperty('--grid-span', spanSize);
-            item.style.setProperty('--base-scale', scaleSize);
-            item.style.setProperty('--overlap-margin', overlap);
-            item.style.zIndex = (index % 10) + 1;
+            item.style.zIndex = i + 1;
 
             const crop = document.createElement("div");
             crop.className = "media-crop";
@@ -454,20 +417,14 @@
             const extensao = arq.nome.split('.').pop().toLowerCase();
             const ehVideo = ['mp4', 'webm', 'mov'].includes(extensao);
 
-            // Definição da URL da miniatura:
-            // Se o seu servidor aceitar parâmetros de otimização, altere abaixo para algo como:
-            // const urlMiniatura = ehVideo ? arq.url : `${arq.url}?width=400&quality=75`;
-            const urlMiniatura = arq.url; 
-
             item.onclick = () => {
                 renovarSessao();
-                // No clique do Lightbox, injetamos a URL original (alta qualidade)
                 abrirLightbox(arq.url, ehVideo);
             };
 
             if (ehVideo) {
                 const video = document.createElement("video");
-                video.src = urlMiniatura;
+                video.src = arq.url; 
                 video.muted = true;
                 video.preload = "metadata";
                 crop.appendChild(video);
@@ -478,8 +435,8 @@
                 crop.appendChild(watermark);
             } else {
                 const img = document.createElement("img");
-                img.src = urlMiniatura;
-                img.loading = "lazy"; // Garante performance extra nativa do navegador
+                img.src = arq.url; 
+                img.loading = "lazy";
                 crop.appendChild(img);
             }
 
@@ -492,25 +449,19 @@
             grid.appendChild(item);
         }
 
-        itensExibidos = limite;
+        indiceAtual = fimDoLote;
 
-        // Se ainda restarem itens a carregar, exibe o aviso no rodapé
-        if (itensExibidos < todosArquivos.length) {
-            document.getElementById("loading-trigger").classList.remove("hidden");
-        } else {
-            document.getElementById("loading-trigger").classList.add("hidden");
+        if (indiceAtual >= listaArquivosCompleta.length) {
+            trigger.classList.add("hidden");
         }
     }
 
     function configurarScrollInfinito() {
-        window.addEventListener("scroll", () => {
-            if (todosArquivos.length === 0 || itensExibidos >= todosArquivos.length) return;
-
-            // Verifica se o usuário chegou próximo ao fim da rolagem vertical da página (menos de 150px para o fim)
-            if ((window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight - 150) {
+        window.onscroll = function() {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
                 carregarProximoLote();
             }
-        });
+        };
     }
 
     function renderizarMenuPastas(pastas) {
@@ -523,7 +474,7 @@
             btn.innerText = p.charAt(0).toUpperCase() + p.slice(1);
             btn.onclick = () => {
                 pastaAtiva = p;
-                carregarDados();
+                carregarDados(true);
             };
             menuContainer.appendChild(btn);
         });
@@ -535,14 +486,14 @@
 
         if (ehVideo) {
             const video = document.createElement("video");
-            video.src = url; // Alta qualidade nativa
+            video.src = url;
             video.controls = true;
             video.autoplay = true;
             video.className = "lightbox-content lightbox-video";
             container.appendChild(video);
         } else {
             const img = document.createElement("img");
-            img.src = url; // Alta qualidade nativa
+            img.src = url;
             img.className = "lightbox-content";
             container.appendChild(img);
         }
