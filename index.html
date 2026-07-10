@@ -3,180 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Álbum de Fotos</title>
+    <title>Album</title>
     <style>
         :root {
-            --bg-body: #f8f9fa;
+            --bg-body: #f4f6f4;
             --bg-card: #ffffff;
-            --text-main: #3c4043;
-            --pastel-green: #e6f4ea;
-            --pastel-green-dark: #137333;
-            --border-color: #dadce0;
+            --text-main: #2d3732;
+            --pastel-green: #d1ebd9;
+            --pastel-green-dark: #2b5138;
+            --border-color: #e2e8e4;
         }
         body {
-            font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-body);
             color: var(--text-main);
             margin: 0;
             padding: 0;
         }
-        /* Topbar estilo Google */
         .topbar {
             background: var(--bg-card);
             border-bottom: 1px solid var(--border-color);
-            padding: 15px 30px;
+            padding: 12px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             position: sticky;
             top: 0;
             z-index: 100;
+            height: 40px;
         }
         .topbar h1 {
             margin: 0;
-            font-size: 22px;
-            font-weight: 400;
-            color: #5f6368;
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--pastel-green-dark);
+            letter-spacing: 0.5px;
         }
         .main-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 24px;
+            padding: 20px;
         }
-        /* Caixa de Login centralizada */
         .login-box {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 30px;
-            max-width: 360px;
-            margin: 100px auto text-align center;
-            box-shadow: 0 1px 3px rgba(60,64,67,0.3);
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 340px;
+            margin: 120px auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
             text-align: center;
         }
-        .login-box h3 { margin-top: 0; color: #202124; font-weight: 500; }
+        .login-box h3 { margin-top: 0; font-weight: 500; color: var(--text-main); }
         input[type="password"] {
             width: 100%;
             padding: 12px;
-            margin: 15px 0;
+            margin: 16px 0;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
+            border-radius: 6px;
             box-sizing: border-box;
             font-size: 16px;
+            background-color: #fafbfa;
         }
         button {
             background-color: var(--pastel-green);
             color: var(--pastel-green-dark);
             border: none;
-            padding: 12px 24px;
-            border-radius: 4px;
-            font-weight: 500;
-            font-size: 14px;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
             cursor: pointer;
             transition: background 0.2s;
         }
-        button:hover { background-color: #d2ebd9; }
+        button:hover { background-color: #bce0c7; }
+        .btn-logout {
+            background-color: transparent;
+            color: #707773;
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            font-size: 13px;
+        }
+        .btn-logout:hover { background-color: #f0f2f0; color: #c5221f; }
         .hidden { display: none !important; }
         
-        /* Menu de Pastas em Botões (Estilo Abas/Filtros) */
+        /* Menu de Pastas (Abas) */
         .folder-menu {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
-            margin-bottom: 25px;
+            margin-bottom: 24px;
         }
         .folder-btn {
             background: var(--bg-card);
-            color: #5f6368;
+            color: #5c635f;
             border: 1px solid var(--border-color);
             padding: 8px 16px;
-            border-radius: 20px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
+            font-weight: 500;
         }
         .folder-btn.active {
             background: var(--pastel-green);
             color: var(--pastel-green-dark);
             border-color: transparent;
-            font-weight: bold;
         }
 
-        /* Grade Estilo Google Fotos */
+        /* Mural Estilo Mosaico / Bagunça Organizada (Masonry) */
         .photo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 16px;
+            columns: 4 250px; /* Cria colunas responsivas dinâmicas */
+            column-gap: 16px;
+            width: 100%;
         }
         .photo-item {
             background: var(--bg-card);
-            border-radius: 8px;
-            overflow: hidden;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            break-inside: avoid; /* Impede a quebra do card entre colunas */
+            display: inline-block;
+            width: 100%;
             border: 1px solid var(--border-color);
-            transition: transform 0.15s;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
         }
         .photo-item:hover {
-            transform: scale(1.02);
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.06);
         }
-        .media-container {
-            position: relative;
+        .photo-item img, .photo-item video {
             width: 100%;
-            padding-top: 75%; /* Proporção 4:3 charmosa */
-            background: #ebebeb;
-        }
-        .media-container img, .media-container video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            height: auto;
+            display: block;
+            max-height: 400px; /* Controla discrepâncias exageradas */
             object-fit: cover;
         }
         .photo-info {
-            padding: 12px;
-            font-size: 14px;
-            color: #3c4043;
+            padding: 10px;
+            font-size: 13px;
+            color: #5c635f;
             text-align: center;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            background: #fafafa;
+            background: #fafbfa;
             border-top: 1px solid var(--border-color);
+        }
+
+        /* Lightbox - Expandir Mídia Fit To Screen */
+        .lightbox {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(244, 246, 244, 0.98);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+        }
+        .lightbox-content {
+            max-width: 95vw;
+            max-height: 90vh;
+            object-fit: contain;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 6px;
+        }
+        .lightbox-video {
+            width: 80vw;
+            max-width: 900px;
+            max-height: 85vh;
         }
     </style>
 </head>
 <body>
 
 <div class="topbar">
-    <h1>🍀 Album</h1>
+    <h1>Album</h1>
+    <button id="logout-btn" class="btn-logout hidden" onclick="deslogar()">Sair</button>
 </div>
 
 <div class="main-container">
 
-    <!-- TELA DE LOGIN -->
+    <!-- LOGIN -->
     <div id="login-box" class="login-box">
-        <h3>Acessar Álbum Pessoal</h3>
+        <h3>Acessar Álbum</h3>
         <input type="password" id="senha" placeholder="Digite a senha">
         <button onclick="autenticar()">Visualizar</button>
         <p id="erro" style="color: #c5221f; font-size: 14px; margin-top: 10px;"></p>
     </div>
 
-    <!-- CONTEÚDO DO ÁLBUM -->
+    <!-- CONTEÚDO -->
     <div id="album-content" class="hidden">
-        <!-- Menu Dinâmico de Pastas -->
         <div id="folder-menu" class="folder-menu"></div>
-
-        <!-- Grade de Fotos -->
         <div id="photo-grid" class="photo-grid"></div>
     </div>
 
 </div>
 
+<!-- LIGHTBOX -->
+<div id="lightbox" class="lightbox hidden" onclick="fecharLightbox()">
+    <div id="lightbox-media-container" onclick="event.stopPropagation()"></div>
+</div>
+
 <script>
-    // ⚠️ SUBSTITUA COM A URL DO SEU WORKER DA CLOUDFLARE:
+    // ⚠️ COLOQUE A URL DO SEU WORKER ABAIXO:
     const WORKER_URL = "https://api-album.bruno-d-souza.workers.dev/";
     
     let senhaSalva = "";
     let pastaAtiva = "";
+
+    // Função para atualizar o timer de inatividade
+    function renovarSessao() {
+        if (senhaSalva) {
+            localStorage.setItem("album_timestamp", Date.now().toString());
+        }
+    }
+
+    // Monitora cliques e toques na tela para resetar o tempo de inatividade
+    document.addEventListener("click", renovarSessao);
+    document.addEventListener("touchstart", renovarSessao);
+
+    // Executa ao abrir a página para checar se a sessão anterior ainda é válida
+    window.onload = function() {
+        const sessao = localStorage.getItem("album_sessao");
+        const timestamp = localStorage.getItem("album_timestamp");
+        
+        if (sessao && timestamp) {
+            const decorrido = (Date.now() - parseInt(timestamp)) / 1000 / 60; // em minutos
+            
+            if (decorrido < 10) {
+                // Ainda está dentro do tempo de atividade: Loga direto e renova o tempo
+                senhaSalva = sessao;
+                localStorage.setItem("album_timestamp", Date.now().toString());
+                modoLogado();
+                return;
+            }
+        }
+        localStorage.clear(); // Limpa dados antigos ou expirados se passou de 10 min
+    };
 
     async function autenticar() {
         const senhaInput = document.getElementById("senha").value;
@@ -192,18 +257,32 @@
             if (!response.ok) throw new Error();
 
             senhaSalva = senhaInput;
-            document.getElementById("login-box").classList.add("hidden");
-            document.getElementById("album-content").classList.remove("hidden");
+            localStorage.setItem("album_sessao", senhaSalva);
+            localStorage.setItem("album_timestamp", Date.now().toString());
             
-            carregarDados();
+            modoLogado();
         } catch (err) {
             erroTxt.innerText = "Senha incorreta. Tente novamente.";
         }
     }
 
-    async function carregarDados() {
+    function modoLogado() {
+        document.getElementById("login-box").classList.add("hidden");
+        document.getElementById("album-content").classList.remove("hidden");
+        document.getElementById("logout-btn").classList.remove("hidden");
+        carregarDados(true); 
+    }
+
+    function deslogar() {
+        localStorage.clear();
+        location.reload();
+    }
+
+    async function carregarDados(primeiraCarga = false) {
         const grid = document.getElementById("photo-grid");
-        grid.innerHTML = "<p>Buscando suas mídias...</p>";
+        grid.innerHTML = "<p>Buscando mídias...</p>";
+
+        renovarSessao(); // Garante a renovação ao trocar de pasta
 
         try {
             const response = await fetch(WORKER_URL, {
@@ -214,48 +293,55 @@
 
             const dados = await response.json();
             
-            // 1. Renderiza o Menu de Pastas Dinamicamente
             renderizarMenuPastas(dados.pastas);
 
-            // 2. Renderiza as Mídias
+            if (primeiraCarga && dados.pastas && dados.pastas.length > 0 && pastaAtiva === "") {
+                pastaAtiva = dados.pastas[0];
+                carregarDados(false);
+                return;
+            }
+
             grid.innerHTML = "";
             if (!dados.arquivos || dados.arquivos.length === 0) {
-                grid.innerHTML = "<p>Nenhuma foto ou vídeo encontrado aqui.</p>";
+                grid.innerHTML = "<p>Nenhum arquivo encontrado nesta pasta.</p>";
                 return;
             }
 
             dados.arquivos.forEach(arq => {
                 const item = document.createElement("div");
                 item.className = "photo-item";
-
-                const mediaContainer = document.createElement("div");
-                mediaContainer.className = "media-container";
-
+                
                 const extensao = arq.nome.split('.').pop().toLowerCase();
                 const ehVideo = ['mp4', 'webm', 'mov'].includes(extensao);
+
+                item.onclick = () => {
+                    renovarSessao(); // Zera o contador ao abrir uma foto
+                    abrirLightbox(arq.url, ehVideo);
+                };
 
                 if (ehVideo) {
                     const video = document.createElement("video");
                     video.src = arq.url;
-                    video.controls = true;
-                    mediaContainer.appendChild(video);
+                    video.muted = true;
+                    video.preload = "metadata";
+                    item.appendChild(video);
                 } else {
                     const img = document.createElement("img");
                     img.src = arq.url;
-                    mediaContainer.appendChild(img);
+                    img.loading = "lazy";
+                    item.appendChild(img);
                 }
 
                 const info = document.createElement("div");
                 info.className = "photo-info";
                 info.innerText = arq.nome;
-
-                item.appendChild(mediaContainer);
                 item.appendChild(info);
+
                 grid.appendChild(item);
             });
 
         } catch (err) {
-            grid.innerHTML = "<p style='color:red;'>Erro ao carregar o conteúdo do R2.</p>";
+            grid.innerHTML = "<p style='color:red;'>Erro ao se conectar ao repositório.</p>";
         }
     }
 
@@ -263,26 +349,43 @@
         const menuContainer = document.getElementById("folder-menu");
         menuContainer.innerHTML = "";
 
-        // Botão para exibir tudo
-        const btnTodas = document.createElement("button");
-        btnTodas.className = `folder-btn ${pastaAtiva === "" ? "active" : ""}`;
-        btnTodas.innerText = "Todas as Fotos";
-        btnTodas.onclick = () => mudarPasta("");
-        menuContainer.appendChild(btnTodas);
-
-        // Cria um botão para cada pasta que ele achou no R2
         pastas.forEach(p => {
             const btn = document.createElement("button");
             btn.className = `folder-btn ${pastaAtiva === p ? "active" : ""}`;
-            btn.innerText = p.charAt(0).toUpperCase() + p.slice(1); // Primeira letra maiúscula
-            btn.onclick = () => mudarPasta(p);
+            btn.innerText = p.charAt(0).toUpperCase() + p.slice(1);
+            btn.onclick = () => {
+                pastaAtiva = p;
+                carregarDados();
+            };
             menuContainer.appendChild(btn);
         });
     }
 
-    function mudarPasta(nomePasta) {
-        pastaAtiva = nomePasta;
-        carregarDados();
+    function abrirLightbox(url, ehVideo) {
+        const container = document.getElementById("lightbox-media-container");
+        container.innerHTML = "";
+
+        if (ehVideo) {
+            const video = document.createElement("video");
+            video.src = url;
+            video.controls = true;
+            video.autoplay = true;
+            video.className = "lightbox-content lightbox-video";
+            container.appendChild(video);
+        } else {
+            const img = document.createElement("img");
+            img.src = url;
+            img.className = "lightbox-content";
+            container.appendChild(img);
+        }
+
+        document.getElementById("lightbox").classList.remove("hidden");
+    }
+
+    function fecharLightbox() {
+        const container = document.getElementById("lightbox-media-container");
+        container.innerHTML = ""; 
+        document.getElementById("lightbox").classList.add("hidden");
     }
 </script>
 </body>
