@@ -19,6 +19,7 @@
             color: var(--text-main);
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
         }
         .topbar {
             background: var(--bg-card);
@@ -39,9 +40,13 @@
             color: var(--pastel-green-dark);
         }
         .main-container {
-            max-width: 1300px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 24px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 90px);
+            box-sizing: border-box;
         }
         .login-box {
             background: var(--bg-card);
@@ -80,22 +85,28 @@
         }
         .hidden { display: none !important; }
         
+        .controls-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
         .folder-menu {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
-            margin-bottom: 40px;
-            position: relative;
-            z-index: 150;
         }
         .folder-btn {
             background: var(--bg-card);
             color: #5c635f;
             border: 1px solid var(--border-color);
-            padding: 8px 16px;
+            padding: 6px 14px;
             border-radius: 20px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
         }
         .folder-btn.active {
             background: var(--pastel-green);
@@ -103,94 +114,100 @@
             border-color: transparent;
         }
 
-        /* 🎞️ CONTAINER MURAL ESTILO SCRAPBOOK (FOTOS JOGADAS NA MESA) */
-        .photo-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px 10px; /* Margens sobrepostas aproximadas */
-            padding: 20px 0;
-            width: 100%;
+        .sort-menu select {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 13px;
+            cursor: pointer;
         }
 
-        /* 📸 MINIATURAS ESTILO FOTO REVELADA POLAROID/RETRÔ */
+        /* 🎞️ CONTAINER MURAL DINÂMICO (Preenche a tela sem gerar scroll vertical) */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-auto-rows: minmax(120px, 1fr);
+            gap: 15px;
+            justify-content: center;
+            align-content: center;
+            flex-grow: 1; /* Faz ocupar o espaço restante da tela */
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        /* 📸 MINIATURAS ESTILO POLAROID DINÂMICAS */
         .photo-item {
             background: #ffffff;
-            /* Bordas brancas grossas para simular o papel fotográfico impresso das referências */
-            padding: 12px 12px 24px 12px; 
+            padding: 8px 8px 16px 8px; 
             border-radius: 2px;
-            width: 180px; /* Tamanho clássico de miniatura */
-            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.12); /* Sombra realista de papel sobreposto */
+            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1); 
             border: 1px solid #e3e3e3;
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, z-index 0s;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
             position: relative;
-            
-            /* Efeito dinâmico de rotação gerado via JS no loop (Bagunça Organizada) */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            max-height: 220px; /* Impede que fiquem gigantes em monitores grandes */
             transform: rotate(var(--rotation));
-            margin-right: -10px; /* Faz as fotos se encostarem e sobreporem levemente lateralmente */
         }
 
-        /* Quando passa o mouse por cima, a foto vai para o topo da "pilha" e endireita um pouco */
         .photo-item:hover {
             z-index: 99 !important;
-            transform: scale(1.1) rotate(0deg);
-            box-shadow: 5px 12px 20px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05) rotate(0deg);
+            box-shadow: 5px 12px 20px rgba(0, 0, 0, 0.15);
         }
 
-        /* Container interno para cortar a imagem/video em tamanho quadrado miniatura uniforme */
         .media-crop {
             width: 100%;
-            height: 140px; /* Altura fixa para as miniaturas */
+            flex-grow: 1;
             overflow: hidden;
             background: #f0f0f0;
             border: 1px solid #f0f0f0;
-            position: relative; /* Adicionado para permitir o alinhamento absoluto da marca d'água */
+            position: relative;
         }
         .media-crop img, .media-crop video {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
-            image-rendering: -webkit-optimize-contrast; /* Deixa a miniatura levemente compactada visualmente mais nítida */
         }
 
-        /* ▶️ MARCA D'ÁGUA DE PLAY PARA OS VÍDEOS (Atualizada para 50% de opacidade) */
+        /* ▶️ MARCA D'ÁGUA DE PLAY SOBRE O VÍDEO (OPACITY 50%) */
         .play-watermark {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 44px;
-            height: 44px;
-            background: rgba(255, 255, 255, 0.9); /* Fundo branco circular límpido */
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             z-index: 10;
-            pointer-events: none; /* Garante que o clique passe direto para o card */
-            opacity: 0.5; /* 50% de opacidade por padrão conforme solicitado */
-            transition: opacity 0.2s ease, transform 0.2s ease;
+            pointer-events: none;
+            opacity: 0.5; /* Pedido de 50% de opacidade */
+            transition: opacity 0.2s ease;
         }
-        /* Desenho do triângulo do Play usando SVG inline */
         .play-watermark svg {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             fill: var(--pastel-green-dark);
-            margin-left: 3px; /* Ajuste óptico fino para centralizar o triângulo */
+            margin-left: 2px;
         }
-        /* Efeito de destaque ao passar o mouse sobre o card do vídeo */
         .photo-item:hover .play-watermark {
-            opacity: 1; /* Fica 100% visível no hover */
-            transform: translate(-50%, -50%) scale(1.05); /* Dá um leve feedback de crescimento */
+            opacity: 1;
         }
 
-        /* Legenda discreta, simulando escrita à mão simulada das referências */
         .photo-info {
-            padding-top: 12px;
-            font-size: 12px;
+            padding-top: 8px;
+            font-size: 11px;
             color: #555;
             text-align: center;
             white-space: nowrap;
@@ -199,21 +216,53 @@
             font-style: italic;
         }
 
-        /* Indicador de carregamento no final do scroll */
-        .loading-trigger {
-            width: 100%;
-            text-align: center;
-            padding: 20px;
-            font-size: 14px;
-            color: #707773;
-            font-style: italic;
+        /* 🔢 BARRA DE PAGINAÇÃO COMPACTA */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            width: fit-content;
+            margin: 0 auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .pagination-btn {
+            background: var(--pastel-green);
+            color: var(--pastel-green-dark);
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .pagination-btn:disabled {
+            background: #e0e0e0;
+            color: #a0a0a0;
+            cursor: not-allowed;
+        }
+        .pagination-info {
+            font-size: 13px;
+            color: var(--text-main);
+        }
+        .page-select {
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-family: inherit;
+            font-size: 13px;
+            cursor: pointer;
         }
 
-        /* 🗺️ LIGHTBOX FIT TO SCREEN (EXPANDIR NO CLIQUE) */
+        /* 🗺️ LIGHTBOX FIT TO SCREEN */
         .lightbox {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(235, 235, 235, 0.98); /* Fundo cinza clarinho combinando com a paleta */
+            background: rgba(235, 235, 235, 0.98);
             z-index: 2000;
             display: flex;
             align-items: center;
@@ -224,7 +273,7 @@
             max-width: 90vw;
             max-height: 85vh;
             object-fit: contain;
-            border: 15px solid #ffffff; /* Mantém a moldura de foto mesmo quando expandida */
+            border: 15px solid #ffffff;
             box-shadow: 0 15px 40px rgba(0,0,0,0.15);
             border-radius: 2px;
             background: #fff;
@@ -255,9 +304,30 @@
 
     <!-- CONTEÚDO -->
     <div id="album-content" class="hidden">
-        <div id="folder-menu" class="folder-menu"></div>
+        <div class="controls-wrapper">
+            <div id="folder-menu" class="folder-menu"></div>
+            <div class="sort-menu">
+                <select id="sort-select" onchange="aplicarOrdenacaoERenderizar()">
+                    <option value="nome-asc">Nome (A-Z)</option>
+                    <option value="nome-desc">Nome (Z-A)</option>
+                    <option value="data-desc">Mais Recentes</option>
+                    <option value="data-asc">Mais Antigas</option>
+                </select>
+            </div>
+        </div>
+        
         <div id="photo-grid" class="photo-grid"></div>
-        <div id="loading-trigger" class="loading-trigger hidden">Carregando mais fotos...</div>
+
+        <!-- PAGINAÇÃO -->
+        <div class="pagination-container">
+            <button id="prev-btn" class="pagination-btn" onclick="mudarPagina(-1)">« Voltar</button>
+            <span class="pagination-info">
+                Página 
+                <select id="page-select" class="page-select" onchange="irParaPaginaEspecifica(this.value)"></select> 
+                de <span id="total-pages">1</span>
+            </span>
+            <button id="next-btn" class="pagination-btn" onclick="mudarPagina(1)">Avançar »</button>
+        </div>
     </div>
 
 </div>
@@ -268,16 +338,14 @@
 </div>
 
 <script>
-    // ⚠️ COLOQUE A URL DO SEU WORKER ABAIXO:
     const WORKER_URL = "https://api-album.bruno-d-souza.workers.dev/";
     
     let senhaSalva = "";
     let pastaAtiva = "";
     
-    // Variáveis de controle do Scroll Infinito
     let listaArquivosCompleta = [];
-    let indiceAtual = 0;
-    const ITENS_POR_PAGINA = 12; // Quantidade de fotos por "lote" de carregamento
+    let paginaAtual = 1;
+    const ITENS_POR_PAGINA = 10; // Fixo em 10 itens conforme solicitado
 
     function renovarSessao() {
         if (senhaSalva) {
@@ -320,7 +388,6 @@
             senhaSalva = senhaInput;
             localStorage.setItem("album_sessao", senhaSalva);
             localStorage.setItem("album_timestamp", Date.now().toString());
-            
             modoLogado();
         } catch (err) {
             erroTxt.innerText = "Senha incorreta. Tente novamente.";
@@ -332,7 +399,6 @@
         document.getElementById("album-content").classList.remove("hidden");
         document.getElementById("logout-btn").classList.remove("hidden");
         carregarDados(true); 
-        configurarScrollInfinito();
     }
 
     function deslogar() {
@@ -342,12 +408,7 @@
 
     async function carregarDados(primeiraCarga = false) {
         const grid = document.getElementById("photo-grid");
-        const trigger = document.getElementById("loading-trigger");
-        
-        if (primeiraCarga) {
-            grid.innerHTML = "<p>Buscando mídias...</p>";
-            trigger.classList.add("hidden");
-        }
+        if (primeiraCarga) grid.innerHTML = "<p>Buscando mídias...</p>";
 
         renovarSessao();
 
@@ -359,7 +420,6 @@
             });
 
             const dados = await response.json();
-            
             renderizarMenuPastas(dados.pastas);
 
             if (primeiraCarga && dados.pastas && dados.pastas.length > 0 && pastaAtiva === "") {
@@ -368,48 +428,59 @@
                 return;
             }
 
-            if (primeiraCarga || grid.innerHTML.includes("Buscando mídias...")) {
-                grid.innerHTML = "";
-            }
-
             if (!dados.arquivos || dados.arquivos.length === 0) {
                 grid.innerHTML = "<p>Nenhum arquivo encontrado nesta pasta.</p>";
-                trigger.classList.add("hidden");
                 return;
             }
 
             listaArquivosCompleta = dados.arquivos;
-            indiceAtual = 0;
+            paginaAtual = 1;
             
-            carregarProximoLote();
+            aplicarOrdenacaoERenderizar();
 
         } catch (err) {
             grid.innerHTML = "<p style='color:red;'>Erro ao se conectar ao repositório.</p>";
         }
     }
 
-    function carregarProximoLote() {
-        const grid = document.getElementById("photo-grid");
-        const trigger = document.getElementById("loading-trigger");
-        
-        if (indiceAtual >= listaArquivosCompleta.length) {
-            trigger.classList.add("hidden");
-            return;
-        }
+    function aplicarOrdenacaoERenderizar() {
+        const criterio = document.getElementById("sort-select").value;
 
-        trigger.classList.remove("hidden");
-        
-        const fimDoLote = Math.min(indiceAtual + ITENS_POR_PAGINA, listaArquivosCompleta.length);
-        
-        for (let i = indiceAtual; i < fimDoLote; i++) {
+        listaArquivosCompleta.sort((a, b) => {
+            if (criterio === "nome-asc") return a.nome.localeCompare(b.nome);
+            if (criterio === "nome-desc") return b.nome.localeCompare(a.nome);
+            
+            // Tratamento caso o Worker não envie propriedade de data explicita
+            const dataA = a.uploadedAt || a.date || 0;
+            const dataB = b.uploadedAt || b.date || 0;
+            
+            if (criterio === "data-desc") return new Date(dataB) - new Date(dataA);
+            if (criterio === "data-asc") return new Date(dataA) - new Date(dataB);
+        });
+
+        renderizarPagina();
+    }
+
+    function renderizarPagina() {
+        const grid = document.getElementById("photo-grid");
+        grid.innerHTML = "";
+
+        const totalItens = listaArquivosCompleta.length;
+        const totalPaginas = Math.ceil(totalItens / ITENS_POR_PAGINA);
+
+        // Ajuste de limites para a renderização estrita
+        const inicio = (paginaAtual - 1) * ITENS_POR_PAGINA;
+        const fim = Math.min(inicio + ITENS_POR_PAGINA, totalItens);
+
+        for (let i = inicio; i < fim; i++) {
             const arq = listaArquivosCompleta[i];
             
             const item = document.createElement("div");
             item.className = "photo-item";
             
-            const grausAleatorios = (Math.random() * 12 - 6).toFixed(2);
+            // Efeito aleatório sutil adaptado para visualização em grid fixo (-3deg a +3deg)
+            const grausAleatorios = (Math.random() * 6 - 3).toFixed(2);
             item.style.setProperty('--rotation', `${grausAleatorios}deg`);
-            item.style.zIndex = i + 1;
 
             const crop = document.createElement("div");
             crop.className = "media-crop";
@@ -449,19 +520,34 @@
             grid.appendChild(item);
         }
 
-        indiceAtual = fimDoLote;
+        atualizarControlesPagina(totalPaginas);
+    }
 
-        if (indiceAtual >= listaArquivosCompleta.length) {
-            trigger.classList.add("hidden");
+    function atualizarControlesPagina(totalPaginas) {
+        document.getElementById("total-pages").innerText = totalPaginas;
+        document.getElementById("prev-btn").disabled = (paginaAtual === 1);
+        document.getElementById("next-btn").disabled = (paginaAtual === totalPaginas || totalPaginas === 0);
+
+        // Renderiza e atualiza o seletor direto de páginas dinamicamente
+        const seletor = document.getElementById("page-select");
+        seletor.innerHTML = "";
+        for (let p = 1; p <= totalPaginas; p++) {
+            const opt = document.createElement("option");
+            opt.value = p;
+            opt.innerText = p;
+            if (p === paginaAtual) opt.selected = true;
+            seletor.appendChild(opt);
         }
     }
 
-    function configurarScrollInfinito() {
-        window.onscroll = function() {
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
-                carregarProximoLote();
-            }
-        };
+    function mudarPagina(direcao) {
+        paginaAtual += direcao;
+        renderizarPagina();
+    }
+
+    function irParaPaginaEspecifica(pagina) {
+        paginaAtual = parseInt(pagina);
+        renderizarPagina();
     }
 
     function renderizarMenuPastas(pastas) {
