@@ -455,13 +455,41 @@
     function renderizarPagina() {
         const grid = document.getElementById("photo-grid");
         grid.innerHTML = "";
-
+    
         const totalItens = listaArquivosCompleta.length;
         const totalPaginas = Math.ceil(totalItens / ITENS_POR_PAGINA);
-
+    
         const inicio = (paginaAtual - 1) * ITENS_POR_PAGINA;
         const fim = Math.min(inicio + ITENS_POR_PAGINA, totalItens);
-
+    
+        // Criamos um observador para carregar os arquivos apenas quando o bloco aparecer na tela
+        const observer = new IntersectionObserver((entries, self) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const container = entry.target;
+                    const arqUrl = container.getAttribute("data-url");
+                    const ehVideo = container.getAttribute("data-video") === "true";
+                    
+                    if (ehVideo) {
+                        const video = document.createElement("video");
+                        video.src = arqUrl;
+                        video.poster = arqUrl + "#t=0.5"; // Carrega o frame 0.5 nativamente
+                        video.muted = true;
+                        video.playsInline = true;
+                        video.preload = "metadata"; // Evita baixar o arquivo inteiro
+                        container.appendChild(video);
+                    } else {
+                        const img = document.createElement("img");
+                        img.src = arqUrl;
+                        img.loading = "lazy";
+                        container.appendChild(img);
+                    }
+                    // Para de observar este item pois ele já foi carregado
+                    self.unobserve(container);
+                }
+            });
+        }, { rootMargin: "50px" }); // Começa a carregar um pouco antes de aparecer na tela
+    
         for (let i = inicio; i < fim; i++) {
             const arq = listaArquivosCompleta[i];
             
@@ -470,53 +498,43 @@
             
             const grausAleatorios = (Math.random() * 6 - 3).toFixed(2);
             item.style.setProperty('--rotation', `${grausAleatorios}deg`);
-
+    
             const crop = document.createElement("div");
             crop.className = "media-crop";
-
+    
             const extensao = arq.nome.split('.').pop().toLowerCase();
             const ehVideo = ['mp4', 'webm', 'mov'].includes(extensao);
-
+    
+            // Guardamos as informações da mídia no container para carregar sob demanda
+            crop.setAttribute("data-url", arq.url);
+            crop.setAttribute("data-video", ehVideo ? "true" : "false");
+    
             item.onclick = () => {
                 renovarSessao();
                 abrirLightbox(arq.url, ehVideo);
             };
-
+    
             if (ehVideo) {
-                const video = document.createElement("video");
-                video.src = arq.url; 
-                
-                // O navegador baixa apenas o frame 0.5 como uma imagem estática de capa. Isso usa a aceleração de hardware do aparelho e é infinitamente mais leve
-                video.poster = arq.url + "#t=0.5"; 
-                
-                video.muted = true;
-                video.playsInline = true;
-                video.preload = "metadata"; // Baixa apenas os tamanhos, sem carregar o vídeo na memória
-                crop.appendChild(video);
-            
                 const watermark = document.createElement("div");
                 watermark.className = "play-watermark";
                 watermark.innerHTML = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
                 crop.appendChild(watermark);
-            } else {
-                const img = document.createElement("img");
-                img.src = arq.url; 
-                img.loading = "lazy";
-                crop.appendChild(img);
             }
-
+    
             const info = document.createElement("div");
             info.className = "photo-info";
             info.innerText = arq.nome.substring(0, arq.nome.lastIndexOf('.')) || arq.nome;
-
+    
             item.appendChild(crop);
             item.appendChild(info);
             grid.appendChild(item);
+    
+            // Ativa o observador para carregar a mídia deste bloco de forma inteligente
+            observer.observe(crop);
         }
-
+    
         atualizarControlesPagina(totalPaginas);
     }
-
     function verificarEnterPagina(evento) {
         if (evento.key === "Enter") {
             const input = document.getElementById("page-input");
