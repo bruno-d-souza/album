@@ -347,7 +347,7 @@
 </div>
 
 <script>
-    const WORKER_URL = "https://api-album.bruno-d-souza.workers.dev/";
+    const WORKER_URL = "meu-worker";
     
     let senhaSalva = "";
     let pastaAtiva = "";
@@ -482,17 +482,19 @@
                 abrirLightbox(arq.url, ehVideo);
             };
 
-            if (ehVideo) {
-                const video = document.createElement("video");
-                video.src = arq.url; 
-                video.muted = true;
-                video.preload = "none"; 
-                crop.appendChild(video);
+if (ehVideo) {
+    const video = document.createElement("video");
+    // O '#t=0.001' força o navegador a se posicionar no milissegundo 1 do vídeo, gerando a capa
+    video.src = arq.url + "#t=0.001"; 
+    video.muted = true;
+    video.playsInline = true; // Melhora a compatibilidade em celulares
+    video.preload = "metadata"; // Baixa apenas os dados necessários para exibir o primeiro frame
+    crop.appendChild(video);
 
-                const watermark = document.createElement("div");
-                watermark.className = "play-watermark";
-                watermark.innerHTML = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
-                crop.appendChild(watermark);
+    const watermark = document.createElement("div");
+    watermark.className = "play-watermark";
+    watermark.innerHTML = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+    crop.appendChild(watermark);
             } else {
                 const img = document.createElement("img");
                 img.src = arq.url; 
