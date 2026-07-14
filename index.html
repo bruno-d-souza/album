@@ -495,85 +495,69 @@ function renderizarPagina() {
         ;
 
         if (ehVideo) {
-            // 1. Criamos uma tag de imagem normal para ser a nossa Thumbnail leve
-            const imgThumb=document.createElement("img");
-            imgThumb.loading="lazy";
-            imgThumb.alt=arq.nome;
-            crop.appendChild(imgThumb);
+            const video=document.createElement("video");
+            video.src=arq.url;
 
-            // 2. Criamos o elemento de vídeo de forma temporária e oculta apenas na memória
-            const tempVideo=document.createElement("video");
-            tempVideo.src=arq.url+"#t=0.5";
-            tempVideo.muted=true;
-            tempVideo.playsInline=true;
-            tempVideo.crossOrigin="anonymous"; // Evita problemas de segurança ao ler o frame
-            tempVideo.preload="auto";
+            // O navegador baixa apenas o frame 0.5 como uma imagem estática de capa
+            video.poster=arq.url+"#t=0.5";
 
-            // 3. Assim que o vídeo conseguir ler o frame no segundo 0.5...
-            tempVideo.addEventListener('loadeddata', ()=> {
-                    // Forçamos o tempo exato
-                    tempVideo.currentTime=0.5;
-                });
+            video.muted=true;
+            video.playsInline=true;
+            video.preload="metadata"; // Baixa apenas os tamanhos, sem carregar o vídeo na memória
+            crop.appendChild(video);
 
-            tempVideo.addEventListener('seeked', ()=> {
-                    try {
-                        // Criamos uma tela invisível (Canvas) para capturar a foto
-                        const canvas=document.createElement("canvas");
-                        // Define o tamanho da miniatura (proporcional e baixa resolução para ser leve)
-                        canvas.width=320;
-                        canvas.height=(tempVideo.videoHeight / tempVideo.videoWidth) * 320;
-
-                        const ctx=canvas.getContext("2d");
-                        // Desenha o frame atual do vídeo dentro da tela invisível
-                        ctx.drawImage(tempVideo, 0, 0, canvas.width, canvas.height);
-
-                        // Converte o desenho em uma imagem JPEG comprimida (qualidade 0.6 = super leve)
-                        const fotoBaixaQualidade=canvas.toDataURL("image/jpeg", 0.6);
-
-                        // Aplica a foto gerada na nossa tag de imagem
-                        imgThumb.src=fotoBaixaQualidade;
-
-                        // 4. JOGA FORA O VÍDEO DA MEMÓRIA IMEDIATAMENTE (Limpeza total)
-                        tempVideo.src="";
-                        tempVideo.load();
-                    }
-
-                    catch (e) {
-                        // Se falhar por codec, deixa a URL original com o marcador de tempo como última tentativa
-                        imgThumb.src=arq.url;
-                    }
-                });
-
-            // Se o vídeo falhar direto (ex: link quebrado ou codec não aceito)
-            tempVideo.addEventListener('error', ()=> {
-                    tempVideo.src="";
-                    tempVideo.load();
-                });
-
-            // Mantém o botão de Play por cima da imagem criada
             const watermark=document.createElement("div");
             watermark.className="play-watermark";
             watermark.innerHTML=`<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>`;
             crop.appendChild(watermark);
         }
 
-        else {
-            const img=document.createElement("img");
-            img.src=arq.url;
-            img.loading="lazy";
-            crop.appendChild(img);
-        }
+        const video=document.createElement("video");
 
-        const info=document.createElement("div");
-        info.className="photo-info";
-        info.innerText=arq.nome.substring(0, arq.nome.lastIndexOf('.')) || arq.nome;
+        // Usamos o tempo direto na URL para navegadores que aceitam nativamente
+        video.src=arq.url+"#t=0.5";
+        video.muted=true;
+        video.playsInline=true;
 
-        item.appendChild(crop);
-        item.appendChild(info);
-        grid.appendChild(item);
+        // Mudamos para 'auto' temporariamente para forçar o download do início de vídeos teimosos
+        video.preload="auto";
+        crop.appendChild(video);
+
+        // Se o vídeo carregar e mesmo assim ficar travado no frame 0 (cinza), nós forçamos o navegador a andar meio segundo para a frente e renderizar a imagem.
+        video.addEventListener('loadeddata', ()=> {
+                if (video.readyState >=2) {
+                    video.currentTime=0.5; // Pula para meio segundo (evita telas pretas do início do vídeo)
+                }
+            });
+
+        // 4. Se mesmo assim houver falha no codec, isso evita que o preview trave o resto da página
+        video.addEventListener('error', ()=> {
+                video.preload="none";
+            });
+
+        const watermark=document.createElement("div");
+        watermark.className="play-watermark";
+        watermark.innerHTML=`<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>`;
+        crop.appendChild(watermark);
     }
 
-    atualizarControlesPagina(totalPaginas);
+    else {
+        const img=document.createElement("img");
+        img.src=arq.url;
+        img.loading="lazy";
+        crop.appendChild(img);
+    }
+
+    const info=document.createElement("div");
+    info.className="photo-info";
+    info.innerText=arq.nome.substring(0, arq.nome.lastIndexOf('.')) || arq.nome;
+
+    item.appendChild(crop);
+    item.appendChild(info);
+    grid.appendChild(item);
+}
+
+atualizarControlesPagina(totalPaginas);
 }
 
 function verificarEnterPagina(evento) {
