@@ -484,12 +484,28 @@
 
 if (ehVideo) {
     const video = document.createElement("video");
-    // O '#t=0.001' força o navegador a se posicionar no milissegundo 1 do vídeo, gerando a capa
-    video.src = arq.url + "#t=0.001"; 
+    
+    // 1. Usamos o truque do tempo direto na URL para navegadores que aceitam nativamente
+    video.src = arq.url + "#t=0.5"; 
     video.muted = true;
-    video.playsInline = true; // Melhora a compatibilidade em celulares
-    video.preload = "metadata"; // Baixa apenas os dados necessários para exibir o primeiro frame
+    video.playsInline = true;
+    
+    // 2. Mudamos para 'auto' temporariamente para forçar o download do início de vídeos teimosos
+    video.preload = "auto"; 
     crop.appendChild(video);
+
+    // 3. O "Pulo do Gato": Se o vídeo carregar e mesmo assim ficar travado no frame 0 (cinza),
+    // nós forçamos o navegador a andar meio segundo para a frente e renderizar a imagem.
+    video.addEventListener('loadeddata', () => {
+        if (video.readyState >= 2) {
+            video.currentTime = 0.5; // Pula para meio segundo (evita telas pretas do início do vídeo)
+        }
+    });
+
+    // 4. Se mesmo assim houver falha no codec, isso evita que o preview trave o resto da página
+    video.addEventListener('error', () => {
+        video.preload = "none";
+    });
 
     const watermark = document.createElement("div");
     watermark.className = "play-watermark";
