@@ -484,12 +484,10 @@
     
             if (ehVideo) {
                 const video = document.createElement("video");
-                // Passamos o tempo direto na URL e também no poster para garantir compatibilidade total
-                video.src = arq.url + "#t=0.5"; 
-                video.poster = arq.url + "#t=0.5"; 
+                video.src = arq.url; // URL limpa que o seu Worker aceita perfeitamente
                 video.muted = true;
                 video.playsInline = true;
-                video.preload = "metadata"; // Baixa apenas os dados do frame, sem pesar a rede
+                video.preload = "metadata"; // Carrega apenas o frame inicial de forma ultra leve
                 crop.appendChild(video);
     
                 const watermark = document.createElement("div");
@@ -513,7 +511,7 @@
         }
     
         atualizarControlesPagina(totalPaginas);
-        }
+    }
     function verificarEnterPagina(evento) {
         if (evento.key === "Enter") {
             const input = document.getElementById("page-input");
